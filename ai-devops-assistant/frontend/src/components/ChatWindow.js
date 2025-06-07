@@ -9,7 +9,43 @@ const ChatWindow = () => {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: 'Hello! I\'m your DevOps AI Assistant. How can I help you today?',
+      content: `# Welcome to DevOps AI Assistant! 🚀
+
+I'm here to help you with DevOps questions and troubleshooting. I support **markdown formatting** for better readability:
+
+## What I can help with:
+- **CI/CD pipelines** and troubleshooting
+- **Docker** containerization and orchestration
+- **Kubernetes** deployment and management
+- **Infrastructure as Code** (Terraform, CloudFormation)
+- **Monitoring and logging** solutions
+- **Cloud platforms** (AWS, Azure, GCP)
+
+## Example formatting I support:
+
+### Code blocks with syntax highlighting:
+\`\`\`bash
+# Example Docker command
+docker run -d --name my-app -p 8080:80 nginx:latest
+\`\`\`
+
+### Inline code:
+Use \`kubectl get pods\` to list running pods.
+
+### Lists:
+1. **Numbered lists** for step-by-step instructions
+2. Bullet points for options
+3. **Bold** and *italic* text for emphasis
+
+### Tables:
+| Tool | Purpose | Platform |
+|------|---------|----------|
+| Docker | Containerization | Cross-platform |
+| Kubernetes | Orchestration | Cloud-native |
+
+> 💡 **Tip**: Ask me specific questions about your DevOps challenges for detailed, formatted responses!
+
+How can I assist you today?`,
       timestamp: new Date()
     }
   ]);
