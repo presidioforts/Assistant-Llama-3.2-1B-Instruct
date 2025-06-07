@@ -201,6 +201,26 @@ async function sendMessage(messages) {
     throw new Error(error.response?.data?.error || 'API request failed');
   }
 }
+
+// Example usage
+async function example() {
+  const isHealthy = await checkHealth();
+  if (!isHealthy) {
+    console.error('API is not healthy');
+    return;
+  }
+
+  const messages = [
+    { role: 'user', content: 'How do I deploy to Kubernetes?' }
+  ];
+
+  try {
+    const response = await sendMessage(messages);
+    console.log('AI Response:', response);
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
 ```
 
 ### Python (Requests)
@@ -230,6 +250,18 @@ class DevOpsAssistantClient:
             return response.json()["choices"][0]["message"]["content"]
         except requests.exceptions.RequestException as e:
             raise Exception(f"API request failed: {e}")
+
+# Example usage
+client = DevOpsAssistantClient()
+
+if client.check_health():
+    messages = [
+        {"role": "user", "content": "How do I set up a CI/CD pipeline?"}
+    ]
+    response = client.send_message(messages)
+    print("AI Response:", response)
+else:
+    print("API is not healthy")
 ```
 
 ### cURL Examples
@@ -269,6 +301,23 @@ The API behavior can be configured using environment variables:
 | `TEMPERATURE` | `0.7` | Generation temperature (0.0-2.0) |
 | `MAX_INPUT_LENGTH` | `2048` | Maximum input token length |
 
+## Best Practices
+
+### Request Optimization
+- Keep conversation history reasonable (last 10-20 exchanges)
+- Use clear, specific questions for better responses
+- Include relevant context in your messages
+
+### Error Handling
+- Always check API health before making requests
+- Implement retry logic for transient failures
+- Handle timeout scenarios gracefully
+
+### Performance
+- Reuse HTTP connections when possible
+- Cache health check results for short periods
+- Consider request queuing for high-volume applications
+
 ## OpenAPI Specification
 
 Future versions will include a complete OpenAPI (Swagger) specification for automatic client generation and interactive documentation.
@@ -276,3 +325,10 @@ Future versions will include a complete OpenAPI (Swagger) specification for auto
 ## Versioning
 
 The API uses version prefixes (`/v1/`) to maintain backward compatibility. Future versions will be released as `/v2/`, etc.
+
+## Support
+
+For issues and questions:
+- Check the main README.md for setup instructions
+- Review the architecture documentation for system details
+- Submit issues on the project repository
