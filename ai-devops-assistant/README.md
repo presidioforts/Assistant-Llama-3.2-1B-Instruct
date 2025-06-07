@@ -144,3 +144,9 @@ cd backend && python -m pytest
 
 # Frontend tests
 c 
+```
+
+# Run once to cache the model
+from transformers import AutoTokenizer, AutoModelForCausalLM
+AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B-Instruct")
+AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-1B-Instruct") 
