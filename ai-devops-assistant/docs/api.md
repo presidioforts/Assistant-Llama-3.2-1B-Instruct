@@ -130,15 +130,15 @@ The API uses a conversation format where each message has a role and content:
   "messages": [
     {
       "role": "user",
-      "content": "What is Docker?"
+      "content": "What is Kubernetes?"
     },
     {
       "role": "assistant", 
-      "content": "Docker is a containerization platform..."
+      "content": "Kubernetes is a container orchestration platform..."
     },
     {
       "role": "user",
-      "content": "How do I create a Dockerfile?"
+      "content": "How do I create a deployment manifest?"
     }
   ]
 }
@@ -247,7 +247,7 @@ curl -X POST http://localhost:8000/v1/chat/completions \
     "messages": [
       {
         "role": "user",
-        "content": "How do I set up a Jenkins pipeline?"
+        "content": "How do I set up a CI/CD pipeline with Jenkins?"
       }
     ]
   }'

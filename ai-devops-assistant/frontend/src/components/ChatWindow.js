@@ -15,18 +15,19 @@ I'm here to help you with DevOps questions and troubleshooting. I support **mark
 
 ## What I can help with:
 - **CI/CD pipelines** and troubleshooting
-- **Docker** containerization and orchestration
 - **Kubernetes** deployment and management
-- **Infrastructure as Code** (Terraform, CloudFormation)
-- **Monitoring and logging** solutions
+- **Infrastructure as Code** (Terraform, CloudFormation, Ansible)
+- **Monitoring and logging** solutions (Prometheus, Grafana, ELK Stack)
 - **Cloud platforms** (AWS, Azure, GCP)
+- **Version control** and Git workflows
 
 ## Example formatting I support:
 
 ### Code blocks with syntax highlighting:
 \`\`\`bash
-# Example Docker command
-docker run -d --name my-app -p 8080:80 nginx:latest
+# Example Kubernetes command
+kubectl get pods --all-namespaces
+kubectl apply -f deployment.yaml
 \`\`\`
 
 ### Inline code:
@@ -40,8 +41,8 @@ Use \`kubectl get pods\` to list running pods.
 ### Tables:
 | Tool | Purpose | Platform |
 |------|---------|----------|
-| Docker | Containerization | Cross-platform |
 | Kubernetes | Orchestration | Cloud-native |
+| Terraform | Infrastructure as Code | Multi-cloud |
 
 > 💡 **Tip**: Ask me specific questions about your DevOps challenges for detailed, formatted responses!
 
