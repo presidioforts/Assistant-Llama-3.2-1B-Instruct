@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Virtual environments
+ai-devops-assistant/backend/venv/
+ai-devops-assistant/frontend/node_modules/
+
+# Model files (large files that shouldn't be in git)
+ai-devops-assistant/backend/models/
+*.bin
+*.safetensors
+*.onnx
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+
+# Build outputs
+ai-devops-assistant/frontend/build/
+ai-devops-assistant/frontend/dist/
+
+# Package manager
+package-lock.json
+yarn.lock 

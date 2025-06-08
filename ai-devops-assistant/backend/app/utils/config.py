@@ -8,8 +8,8 @@ class Config:
     PORT = int(os.getenv('PORT', 8000))
     DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
     
-    # Model Configuration
-    MODEL_NAME = os.getenv('MODEL_NAME', 'meta-llama/Llama-3.2-1B-Instruct')
+    # Model Configuration - Using local model files
+    MODEL_NAME = os.getenv('MODEL_NAME', './models/llama-3.2-1B-instruct')
     
     # Generation Parameters
     MAX_NEW_TOKENS = int(os.getenv('MAX_NEW_TOKENS', 512))

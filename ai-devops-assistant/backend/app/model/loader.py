@@ -2,6 +2,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import logging
 from utils.config import Config
+import os
 
 logger = logging.getLogger(__name__)
 
