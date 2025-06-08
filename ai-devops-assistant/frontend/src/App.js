@@ -10,7 +10,7 @@ import {
   ThemeProvider
 } from '@mui/material';
 import enterpriseTheme from './theme/enterpriseTheme';
-import { Menu as MenuIcon } from '@mui/icons-material';
+import { ChatBubble as ChatIcon, Menu as MenuIcon } from '@mui/icons-material';
 import ChatWindow from './components/ChatWindow';
 import ConversationSidebar from './components/ConversationSidebar';
 import { useConversations } from './hooks/useConversations';
@@ -66,15 +66,6 @@ function App() {
         }}
       >
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="toggle sidebar"
-            edge="start"
-            onClick={handleToggleSidebar}
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
           
           <Box sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
             <img 
@@ -88,7 +79,7 @@ function App() {
             />
           </Box>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
-            DevOps AI Assistant - Enterprise Edition
+            DevOps AI Assistant
           </Typography>
           
           {/* Future: User menu, settings, theme toggle */}
