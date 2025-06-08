@@ -21,7 +21,6 @@ import {
   Chip
 } from '@mui/material';
 import {
-  Add as AddIcon,
   Chat as ChatIcon,
   ExpandLess,
   ExpandMore,
@@ -30,6 +29,7 @@ import {
   ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import ChatHistoryIcon from './ChatHistoryIcon';
+import NewChatIcon from './NewChatIcon';
 
 const ConversationSidebar = ({ 
   isOpen, 
@@ -231,7 +231,7 @@ const ConversationSidebar = ({
       <Box sx={{ p: 2, display: 'flex', gap: 2 }}>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={<NewChatIcon />}
           onClick={onNewChat}
           color="warning"
           sx={{ 
