@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, TextField, IconButton, Paper } from '@mui/material';
+import { Box, TextField, IconButton } from '@mui/material';
 import { Send } from '@mui/icons-material';
 
 const MessageInput = ({ onSendMessage, disabled }) => {
@@ -21,15 +21,17 @@ const MessageInput = ({ onSendMessage, disabled }) => {
   };
 
   return (
-    <Paper 
+    <Box 
       component="form" 
       onSubmit={handleSubmit}
       sx={{ 
-        p: 2, 
+        p: 3, 
         display: 'flex', 
         alignItems: 'flex-end',
         borderTop: 1,
-        borderColor: 'divider'
+        borderColor: 'divider',
+        bgcolor: 'background.paper',
+        boxShadow: '0 -1px 3px rgba(0,0,0,0.1)'
       }}
     >
       <TextField
@@ -54,7 +56,7 @@ const MessageInput = ({ onSendMessage, disabled }) => {
       >
         <Send />
       </IconButton>
-    </Paper>
+    </Box>
   );
 };
 

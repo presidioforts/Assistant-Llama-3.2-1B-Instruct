@@ -1,55 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Box, Paper } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import Loader from './Loader';
 import { chatService } from '../utils/chatService';
 
-const ChatWindow = () => {
-  const [messages, setMessages] = useState([
-    {
-      role: 'assistant',
-      content: `# Welcome to DevOps AI Assistant! 🚀
-
-I'm here to help you with DevOps questions and troubleshooting. I support **markdown formatting** for better readability:
-
-## What I can help with:
-- **CI/CD pipelines** and troubleshooting
-- **Kubernetes** deployment and management
-- **Infrastructure as Code** (Terraform, CloudFormation, Ansible)
-- **Monitoring and logging** solutions (Prometheus, Grafana, ELK Stack)
-- **Cloud platforms** (AWS, Azure, GCP)
-- **Version control** and Git workflows
-
-## Example formatting I support:
-
-### Code blocks with syntax highlighting:
-\`\`\`bash
-# Example Kubernetes command
-kubectl get pods --all-namespaces
-kubectl apply -f deployment.yaml
-\`\`\`
-
-### Inline code:
-Use \`kubectl get pods\` to list running pods.
-
-### Lists:
-1. **Numbered lists** for step-by-step instructions
-2. Bullet points for options
-3. **Bold** and *italic* text for emphasis
-
-### Tables:
-| Tool | Purpose | Platform |
-|------|---------|----------|
-| Kubernetes | Orchestration | Cloud-native |
-| Terraform | Infrastructure as Code | Multi-cloud |
-
-> 💡 **Tip**: Ask me specific questions about your DevOps challenges for detailed, formatted responses!
-
-How can I assist you today?`,
-      timestamp: new Date()
-    }
-  ]);
+const ChatWindow = ({ 
+  messages, 
+  onMessagesUpdate, 
+  activeConversation 
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -70,11 +30,12 @@ How can I assist you today?`,
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    onMessagesUpdate(updatedMessages);
     setIsLoading(true);
 
     try {
-      const response = await chatService.sendMessage([...messages, userMessage]);
+      const response = await chatService.sendMessage(updatedMessages);
       
       const assistantMessage = {
         role: 'assistant',
@@ -82,7 +43,7 @@ How can I assist you today?`,
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      onMessagesUpdate([...updatedMessages, assistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = {
@@ -91,22 +52,38 @@ How can I assist you today?`,
         timestamp: new Date(),
         isError: true
       };
-      setMessages(prev => [...prev, errorMessage]);
+      onMessagesUpdate([...updatedMessages, errorMessage]);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <Paper 
-      elevation={3} 
+    <Box 
       sx={{ 
-        height: '70vh', 
+        height: '100%', 
         display: 'flex', 
         flexDirection: 'column',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        bgcolor: 'background.paper'
       }}
     >
+      {/* Header at same level as New Chat button */}
+      <Box sx={{ 
+        p: 2, 
+        bgcolor: 'background.paper',
+        display: 'flex',
+        alignItems: 'center',
+        minHeight: '64px', // Same height as New Chat button area
+        borderBottom: 1, 
+        borderColor: 'divider'
+      }}>
+        <Typography variant="body1" color="text.primary" sx={{ fontWeight: 500 }}>
+          Enterprise DevOps Assistant - Ask anything about infrastructure, deployment, monitoring
+        </Typography>
+      </Box>
+
+      {/* Messages Area */}
       <Box 
         sx={{ 
           flexGrow: 1, 
@@ -114,24 +91,65 @@ How can I assist you today?`,
           p: 2,
           display: 'flex',
           flexDirection: 'column',
-          gap: 1
+          gap: 1,
+          bgcolor: 'grey.50',
+          minHeight: 0 // Allow flex child to shrink
         }}
       >
-        {messages.map((message, index) => (
-          <MessageBubble 
-            key={index} 
-            message={message} 
-          />
-        ))}
+        {messages.length === 0 ? (
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            flexGrow: 1,
+            textAlign: 'center',
+            color: 'text.secondary',
+            minHeight: '300px', // Ensure minimum height for visibility
+            py: 6
+          }}>
+            <Typography variant="h4" gutterBottom sx={{ 
+              fontWeight: 600, 
+              mb: 3,
+              color: 'text.primary' // Make it more visible
+            }}>
+              👋 Welcome to DevOps AI Assistant
+            </Typography>
+            <Typography variant="body1" sx={{ 
+              maxWidth: 500, 
+              lineHeight: 1.6,
+              mb: 2,
+              color: 'text.secondary'
+            }}>
+              Start a conversation by asking about Docker, Kubernetes, CI/CD pipelines, 
+              infrastructure automation, monitoring, or any DevOps-related topic.
+            </Typography>
+            <Typography variant="body2" sx={{ 
+              mt: 2,
+              color: 'text.secondary',
+              fontWeight: 500
+            }}>
+              Enterprise-grade AI assistance for your DevOps needs
+            </Typography>
+          </Box>
+        ) : (
+          messages.map((message, index) => (
+            <MessageBubble 
+              key={index} 
+              message={message} 
+            />
+          ))
+        )}
         {isLoading && <Loader />}
         <div ref={messagesEndRef} />
       </Box>
       
+      {/* Input Area */}
       <MessageInput 
         onSendMessage={handleSendMessage} 
         disabled={isLoading}
       />
-    </Paper>
+    </Box>
   );
 };
 

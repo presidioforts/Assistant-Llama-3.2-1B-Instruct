@@ -4,7 +4,7 @@ export const API_CONFIG = {
     HEALTH: '/v1/health',
     CHAT_COMPLETIONS: '/v1/chat/completions'
   },
-  TIMEOUT: 30000 // 30 seconds
+  TIMEOUT: 320000 // 5 minutes 20 seconds (matches backend + buffer)
 };
 
 export const UI_CONFIG = {
