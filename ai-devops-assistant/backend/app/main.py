@@ -51,8 +51,19 @@ def chat_completions():
         
         messages = data['messages']
         
+        # NEW: Log the incoming user message
+        user_message = ""
+        for message in messages:
+            if message.get('role') == 'user':
+                user_message = message.get('content', '')
+                break
+        logger.info(f"User message: {user_message}")
+        
         # Generate response using the model
         response_content = model_inference.generate_response(messages)
+        
+        # NEW: Log the model response
+        logger.info(f"Model response: {response_content}")
         
         return jsonify({
             "choices": [
