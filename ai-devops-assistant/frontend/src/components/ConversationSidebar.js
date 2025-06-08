@@ -171,10 +171,16 @@ const ConversationSidebar = ({
           variant="contained"
           startIcon={<AddIcon />}
           onClick={onNewChat}
+          color="warning"
           sx={{ 
             borderRadius: 2,
             textTransform: 'none',
-            fontWeight: 600
+            fontWeight: 600,
+            backgroundColor: '#FFCD41',
+            color: '#1F1F1F',
+            '&:hover': {
+              backgroundColor: '#E6B800'
+            }
           }}
         >
           New Chat

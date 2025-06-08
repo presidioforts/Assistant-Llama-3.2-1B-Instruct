@@ -6,8 +6,10 @@ import {
   Typography, 
   IconButton,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  ThemeProvider
 } from '@mui/material';
+import enterpriseTheme from './theme/enterpriseTheme';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import ChatWindow from './components/ChatWindow';
 import ConversationSidebar from './components/ConversationSidebar';
@@ -15,7 +17,7 @@ import { useConversations } from './hooks/useConversations';
 
 function App() {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(enterpriseTheme.breakpoints.down('md'));
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
   const {
@@ -54,13 +56,13 @@ function App() {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
+    <ThemeProvider theme={enterpriseTheme}>
+      <Box sx={{ display: 'flex', height: '100vh' }}>
       {/* Top App Bar */}
       <AppBar 
         position="fixed" 
         sx={{ 
-          zIndex: theme.zIndex.drawer + 1,
-          bgcolor: 'primary.main'
+          zIndex: theme.zIndex.drawer + 1
         }}
       >
         <Toolbar>
@@ -74,8 +76,19 @@ function App() {
             <MenuIcon />
           </IconButton>
           
+          <Box sx={{ mr: 2, display: 'flex', alignItems: 'center' }}>
+            <img 
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPiIKob-dEwvFz5_JE2QYKzkz7jdmc3O-YZQdRsGT8fuYl5dP3" 
+              alt="Wells Fargo Logo"
+              style={{
+                height: '32px',
+                width: 'auto',
+                objectFit: 'contain'
+              }}
+            />
+          </Box>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 600 }}>
-            🔧 DevOps AI Assistant - Enterprise Edition
+            DevOps AI Assistant - Enterprise Edition
           </Typography>
           
           {/* Future: User menu, settings, theme toggle */}
@@ -118,6 +131,7 @@ function App() {
         />
       </Box>
     </Box>
+    </ThemeProvider>
   );
 }
 
