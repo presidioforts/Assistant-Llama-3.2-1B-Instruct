@@ -21,6 +21,7 @@ import {
   ExpandMore,
   Menu as MenuIcon
 } from '@mui/icons-material';
+import ChatHistoryIcon from './ChatHistoryIcon';
 
 const ConversationSidebar = ({ 
   isOpen, 
@@ -164,15 +165,15 @@ const ConversationSidebar = ({
         )}
       </Box>
 
-      {/* New Chat Button */}
-      <Box sx={{ p: 2 }}>
+      {/* New Chat Button + History Icon */}
+      <Box sx={{ p: 2, display: 'flex', gap: 2 }}>
         <Button
-          fullWidth
           variant="contained"
           startIcon={<AddIcon />}
           onClick={onNewChat}
           color="warning"
           sx={{ 
+            flex: 1,
             borderRadius: 2,
             textTransform: 'none',
             fontWeight: 600,
@@ -185,6 +186,21 @@ const ConversationSidebar = ({
         >
           New Chat
         </Button>
+        
+        {/* Chat History Icon */}
+        <IconButton
+          sx={{ 
+            backgroundColor: '#FFCD41',
+            color: '#1F1F1F',
+            borderRadius: 2,
+            padding: '12px',
+            '&:hover': {
+              backgroundColor: '#E6B800'
+            }
+          }}
+        >
+          <ChatHistoryIcon sx={{ fontSize: 20 }} />
+        </IconButton>
       </Box>
 
       {/* Conversations List */}
