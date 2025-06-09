@@ -105,7 +105,7 @@ const ChatWindow = ({
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
-          bgcolor: 'grey.50',
+          bgcolor: '#fafafa',
           minHeight: 0 // Allow flex child to shrink
         }}
       >

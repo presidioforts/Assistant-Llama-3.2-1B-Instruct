@@ -62,7 +62,7 @@ const MessageInput = ({ onSendMessage, disabled }) => {
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
-        bgcolor: 'transparent',
+        bgcolor: '#fafafa',
         pb: 2,
         px: 3,
       }}
