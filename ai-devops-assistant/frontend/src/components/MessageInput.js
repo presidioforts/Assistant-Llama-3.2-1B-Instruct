@@ -149,15 +149,21 @@ const MessageInput = ({ onSendMessage, disabled }) => {
             onClick={handleSubmit}
             disabled={disabled || !message.trim()}
             sx={{
-              bgcolor: disabled || !message.trim() ? '#eee' : '#1F1F1F',
-              color: disabled || !message.trim() ? '#aaa' : '#fff',
+              bgcolor: disabled || !message.trim() ? '#f5f5f5' : '#1F1F1F',
+              color: disabled || !message.trim() ? '#bbb' : '#fff',
               borderRadius: '50%',
               width: 44,
               height: 44,
               ml: 1,
+              border: disabled || !message.trim() ? '1px solid #e0e0e0' : 'none',
               '&:hover': {
-                bgcolor: disabled || !message.trim() ? '#eee' : '#333',
+                bgcolor: disabled || !message.trim() ? '#f0f0f0' : '#333',
               },
+              '&:disabled': {
+                bgcolor: '#f5f5f5',
+                color: '#bbb',
+                border: '1px solid #e0e0e0',
+              }
             }}
             aria-label="Send message"
           >
