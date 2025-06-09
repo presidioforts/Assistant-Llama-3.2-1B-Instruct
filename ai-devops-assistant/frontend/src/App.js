@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Box, 
   AppBar, 
@@ -7,10 +7,19 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
-  ThemeProvider
+  ThemeProvider,
+  Avatar,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button
 } from '@mui/material';
 import enterpriseTheme from './theme/enterpriseTheme';
-import { ChatBubble as ChatIcon, Menu as MenuIcon } from '@mui/icons-material';
+import { ChatBubble as ChatIcon, Menu as MenuIcon, Settings, Person } from '@mui/icons-material';
 import ChatWindow from './components/ChatWindow';
 import ConversationSidebar from './components/ConversationSidebar';
 import { useConversations } from './hooks/useConversations';
@@ -19,6 +28,20 @@ function App() {
   const theme = useTheme();
   const isMobile = useMediaQuery(enterpriseTheme.breakpoints.down('md'));
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  
+  // Profile state
+  const [userName, setUserName] = useState('');
+  const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
+  const [nameDialogOpen, setNameDialogOpen] = useState(false);
+  const [tempName, setTempName] = useState('');
+
+  // Load user name from localStorage on mount
+  useEffect(() => {
+    const savedName = localStorage.getItem('devops_ai_user_name');
+    if (savedName) {
+      setUserName(savedName);
+    }
+  }, []);
 
   const {
     conversations,
@@ -55,6 +78,40 @@ function App() {
     }
   };
 
+  // Profile functions
+  const handleProfileClick = (event) => {
+    setProfileMenuAnchor(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchor(null);
+  };
+
+  const handleSetupProfile = () => {
+    setTempName(userName);
+    setNameDialogOpen(true);
+    handleProfileMenuClose();
+  };
+
+  const handleSaveName = () => {
+    if (tempName.trim()) {
+      setUserName(tempName.trim());
+      localStorage.setItem('devops_ai_user_name', tempName.trim());
+    }
+    setNameDialogOpen(false);
+    setTempName('');
+  };
+
+  const handleCancelName = () => {
+    setNameDialogOpen(false);
+    setTempName('');
+  };
+
+  const getInitials = (name) => {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
+
   return (
     <ThemeProvider theme={enterpriseTheme}>
       <Box sx={{ display: 'flex', height: '100vh' }}>
@@ -82,9 +139,77 @@ function App() {
             DevOps AI Assistant
           </Typography>
           
-          {/* Future: User menu, settings, theme toggle */}
+          {/* Profile Section */}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              onClick={handleProfileClick}
+              sx={{ ml: 2 }}
+            >
+              <Avatar 
+                sx={{ 
+                  width: 40,
+                  height: 40,
+                  bgcolor: userName ? '#D71921' : 'grey.500',
+                  color: 'white',
+                  fontWeight: 600,
+                  boxShadow: 2
+                }}
+              >
+                {userName ? getInitials(userName) : <Person fontSize="small" />}
+              </Avatar>
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Profile Menu */}
+      <Menu
+        anchorEl={profileMenuAnchor}
+        open={Boolean(profileMenuAnchor)}
+        onClose={handleProfileMenuClose}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={handleSetupProfile}>
+          <Settings sx={{ mr: 1 }} fontSize="small" />
+          {userName ? 'Edit Profile' : 'Setup Profile'}
+        </MenuItem>
+      </Menu>
+
+      {/* Name Setup Dialog */}
+      <Dialog open={nameDialogOpen} onClose={handleCancelName} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          {userName ? 'Edit Your Profile' : 'Welcome! Setup Your Profile'}
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Your Name"
+            fullWidth
+            variant="outlined"
+            value={tempName}
+            onChange={(e) => setTempName(e.target.value)}
+            placeholder="Enter your full name"
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelName}>Cancel</Button>
+          <Button 
+            onClick={handleSaveName} 
+            variant="contained"
+            disabled={!tempName.trim()}
+            sx={{ 
+              bgcolor: '#FFCD41', 
+              color: '#1F1F1F',
+              '&:hover': { bgcolor: '#E6B800' }
+            }}
+          >
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Sidebar */}
       <ConversationSidebar
