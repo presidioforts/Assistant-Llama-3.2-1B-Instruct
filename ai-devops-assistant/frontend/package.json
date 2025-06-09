@@ -10,15 +10,17 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@mui/material": "^5.14.0",
-    "@mui/icons-material": "^5.14.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
+    "@fontsource/jetbrains-mono": "^5.2.6",
+    "@mui/icons-material": "^5.14.0",
+    "@mui/material": "^5.14.0",
+    "axios": "^1.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "axios": "^1.5.0",
     "react-markdown": "^8.0.7",
+    "react-scripts": "5.0.1",
+    "react-syntax-highlighter": "^15.6.1",
     "rehype-highlight": "^6.0.0",
     "rehype-raw": "^6.1.1",
     "remark-gfm": "^3.0.1"
@@ -39,4 +41,4 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0"
   }
-} 
+}

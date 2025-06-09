@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import CodeBlock from './CodeBlock';
 
 const MessageBubble = ({ message }) => {
   const isUser = message.role === 'user';
@@ -48,26 +49,7 @@ const MessageBubble = ({ message }) => {
               margin: '0 0 8px 0',
               '&:last-child': { margin: 0 }
             },
-            '& pre': {
-              backgroundColor: isUser ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-              padding: '12px',
-              borderRadius: '6px',
-              overflow: 'auto',
-              margin: '8px 0',
-              fontSize: '0.875rem',
-              fontFamily: 'Monaco, "Roboto Mono", monospace',
-            },
-            '& code': {
-              backgroundColor: isUser ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              fontSize: '0.875rem',
-              fontFamily: 'Monaco, "Roboto Mono", monospace',
-            },
-            '& pre code': {
-              backgroundColor: 'transparent',
-              padding: 0,
-            },
+
             '& ul, & ol': {
               paddingLeft: '20px',
               margin: '8px 0',
@@ -125,6 +107,34 @@ const MessageBubble = ({ message }) => {
                     {children}
                   </Typography>
                 ),
+                code: ({ node, inline, className, children, ...props }) => {
+                  if (inline) {
+                    // Inline code (single backticks)
+                    return (
+                      <code
+                        style={{
+                          backgroundColor: isUser ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          fontSize: '0.875rem',
+                          fontFamily: '"JetBrains Mono", "Roboto Mono", monospace',
+                        }}
+                        {...props}
+                      >
+                        {children}
+                      </code>
+                    );
+                  }
+                  // Block code (triple backticks) - use enhanced CodeBlock
+                  return (
+                    <CodeBlock 
+                      className={className} 
+                      {...props}
+                    >
+                      {children}
+                    </CodeBlock>
+                  );
+                },
               }}
             >
               {message.content}
