@@ -21,13 +21,14 @@ const ChatWindow = ({
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (messageContent) => {
+  const handleSendMessage = async (messageContent, mode = 'ask') => {
     if (!messageContent.trim()) return;
 
     const userMessage = {
       role: 'user',
       content: messageContent,
-      timestamp: new Date()
+      timestamp: new Date(),
+      mode: mode
     };
 
     const updatedMessages = [...messages, userMessage];
@@ -35,12 +36,21 @@ const ChatWindow = ({
     setIsLoading(true);
 
     try {
-      const response = await chatService.sendMessage(updatedMessages);
+      let response;
+      
+      if (mode === 'search') {
+        // RAG search mode
+        response = await chatService.searchKnowledge(messageContent);
+      } else {
+        // Regular AI chat mode
+        response = await chatService.sendMessage(updatedMessages);
+      }
       
       const assistantMessage = {
         role: 'assistant',
         content: response,
-        timestamp: new Date()
+        timestamp: new Date(),
+        mode: mode
       };
 
       onMessagesUpdate([...updatedMessages, assistantMessage]);
@@ -48,9 +58,12 @@ const ChatWindow = ({
       console.error('Error sending message:', error);
       const errorMessage = {
         role: 'assistant',
-        content: 'I apologize, but I encountered an error while processing your request. Please try again.',
+        content: mode === 'search' 
+          ? 'I apologize, but I encountered an error while searching the knowledge base. Please try again.'
+          : 'I apologize, but I encountered an error while processing your request. Please try again.',
         timestamp: new Date(),
-        isError: true
+        isError: true,
+        mode: mode
       };
       onMessagesUpdate([...updatedMessages, errorMessage]);
     } finally {

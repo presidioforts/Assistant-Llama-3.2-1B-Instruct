@@ -67,5 +67,50 @@ export const chatService = {
         throw new Error(error.response?.data?.error || 'Failed to get response from AI assistant');
       }
     }
+  },
+
+  async searchKnowledge(query) {
+    try {
+      // For now, simulate RAG search with a placeholder response
+      // TODO: Replace with actual RAG endpoint when implemented
+      const response = await apiClient.post('/api/search', {
+        query: query,
+        limit: 10
+      });
+
+      if (response.data && response.data.results) {
+        // Format search results
+        const results = response.data.results;
+        let formattedResponse = `## Search Results for: "${query}"\n\n`;
+        
+        results.forEach((result, index) => {
+          formattedResponse += `### ${index + 1}. ${result.title}\n`;
+          formattedResponse += `${result.content}\n`;
+          if (result.source) {
+            formattedResponse += `*Source: ${result.source}*\n\n`;
+          }
+        });
+
+        return formattedResponse;
+      } else {
+        throw new Error('Invalid search response format');
+      }
+    } catch (error) {
+      // Fallback response if RAG endpoint is not available
+      if (error.response?.status === 404 || error.code === 'ECONNREFUSED') {
+        return `## Search Results for: "${query}"\n\n` +
+               `📚 **RAG Knowledge Base Search**\n\n` +
+               `I searched through the production knowledge base for "${query}". ` +
+               `This is a simulated response since the RAG endpoint is currently being set up.\n\n` +
+               `**Typical results would include:**\n` +
+               `- Documentation snippets\n` +
+               `- Configuration examples\n` +
+               `- Best practices\n` +
+               `- Troubleshooting guides\n\n` +
+               `*Note: Full RAG functionality will be available once the search service is configured.*`;
+      }
+      
+      throw new Error(error.response?.data?.error || 'Failed to search knowledge base');
+    }
   }
 }; 
