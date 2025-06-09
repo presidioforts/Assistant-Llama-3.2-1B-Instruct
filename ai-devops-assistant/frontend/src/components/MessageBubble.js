@@ -35,12 +35,10 @@ const MessageBubble = ({ message }) => {
         sx={{
           p: 2,
           maxWidth: '70%',
-          backgroundColor: isUser 
-            ? 'primary.main' 
-            : isError 
-              ? 'error.light' 
-              : 'grey.100',
-          color: isUser ? 'white' : 'text.primary'
+          backgroundColor: isError 
+            ? 'error.light' 
+            : '#ffffff',
+          color: isError ? 'white' : 'text.primary'
         }}
       >
         <Box
@@ -84,7 +82,7 @@ const MessageBubble = ({ message }) => {
               textAlign: 'left',
             },
             '& th': {
-              backgroundColor: isUser ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+              backgroundColor: 'rgba(0,0,0,0.05)',
               fontWeight: 'bold',
             },
             '& a': {
@@ -113,7 +111,7 @@ const MessageBubble = ({ message }) => {
                     return (
                       <code
                         style={{
-                          backgroundColor: isUser ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)',
+                          backgroundColor: 'rgba(0,0,0,0.08)',
                           padding: '2px 6px',
                           borderRadius: '4px',
                           fontSize: '0.875rem',
