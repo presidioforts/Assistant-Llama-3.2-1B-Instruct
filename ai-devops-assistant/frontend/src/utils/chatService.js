@@ -1,9 +1,17 @@
 import axios from 'axios';
-import { API_CONFIG } from './config';
+import { API_CONFIG, KB_CONFIG } from './config';
 
 const apiClient = axios.create({
   baseURL: API_CONFIG.BASE_URL,
   timeout: API_CONFIG.TIMEOUT,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+const kbApiClient = axios.create({
+  baseURL: KB_CONFIG.BASE_URL,
+  timeout: KB_CONFIG.TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -21,6 +29,18 @@ apiClient.interceptors.request.use(
   }
 );
 
+// Request interceptor for KB API logging
+kbApiClient.interceptors.request.use(
+  (config) => {
+    console.log('KB API Request:', config.method?.toUpperCase(), config.url);
+    return config;
+  },
+  (error) => {
+    console.error('KB API Request Error:', error);
+    return Promise.reject(error);
+  }
+);
+
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => {
@@ -28,6 +48,17 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     console.error('API Response Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for KB API error handling
+kbApiClient.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    console.error('KB API Response Error:', error.response?.data || error.message);
     return Promise.reject(error);
   }
 );
@@ -71,46 +102,27 @@ export const chatService = {
 
   async searchKnowledge(query) {
     try {
-      // For now, simulate RAG search with a placeholder response
-      // TODO: Replace with actual RAG endpoint when implemented
-      const response = await apiClient.post('/api/search', {
-        query: query,
-        limit: 10
+      const response = await kbApiClient.post(KB_CONFIG.ENDPOINTS.TROUBLESHOOT, {
+        value: { text: query }
       });
 
-      if (response.data && response.data.results) {
-        // Format search results
-        const results = response.data.results;
-        let formattedResponse = `## Search Results for: "${query}"\n\n`;
-        
-        results.forEach((result, index) => {
-          formattedResponse += `### ${index + 1}. ${result.title}\n`;
-          formattedResponse += `${result.content}\n`;
-          if (result.source) {
-            formattedResponse += `*Source: ${result.source}*\n\n`;
-          }
-        });
-
-        return formattedResponse;
+      if (response.data && response.data.response) {
+        return response.data.response;
       } else {
-        throw new Error('Invalid search response format');
+        throw new Error('Invalid response format from KB service');
       }
     } catch (error) {
-      // Fallback response if RAG endpoint is not available
-      if (error.response?.status === 404 || error.code === 'ECONNREFUSED') {
-        return `## Search Results for: "${query}"\n\n` +
-               `📚 **RAG Knowledge Base Search**\n\n` +
-               `I searched through the production knowledge base for "${query}". ` +
-               `This is a simulated response since the RAG endpoint is currently being set up.\n\n` +
-               `**Typical results would include:**\n` +
-               `- Documentation snippets\n` +
-               `- Configuration examples\n` +
-               `- Best practices\n` +
-               `- Troubleshooting guides\n\n` +
-               `*Note: Full RAG functionality will be available once the search service is configured.*`;
+      if (error.response?.status === 503) {
+        throw new Error('KB service is not ready. Please try again in a moment.');
+      } else if (error.response?.status >= 500) {
+        throw new Error('KB service error. Please try again later.');
+      } else if (error.code === 'ECONNABORTED') {
+        throw new Error('KB service request timeout. Please try again.');
+      } else if (error.code === 'ECONNREFUSED' || error.response?.status === 404) {
+        throw new Error('KB service is not available. Please check if the service is running.');
+      } else {
+        throw new Error(error.response?.data?.error || 'Failed to search knowledge base');
       }
-      
-      throw new Error(error.response?.data?.error || 'Failed to search knowledge base');
     }
   }
 }; 
