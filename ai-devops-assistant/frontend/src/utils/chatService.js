@@ -1,6 +1,70 @@
 import axios from 'axios';
 import { API_CONFIG, KB_CONFIG } from './config';
 
+// Preprocessing function for KB responses
+const preprocessKBResponse = (rawResponse) => {
+  if (!rawResponse || typeof rawResponse !== 'string') {
+    return rawResponse;
+  }
+
+  let processed = rawResponse;
+
+  // 1. Fix common HTML/Markdown issues
+  processed = processed
+    // Fix malformed line breaks
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    
+    // Ensure proper spacing around headers
+    .replace(/^(#{1,6})\s*(.+)$/gm, '$1 $2')
+    
+    // Fix list formatting
+    .replace(/^[\s]*[-*+]\s*/gم, '- ')
+    .replace(/^[\s]*(\d+\.)\s*/gم, '$1 ')
+    
+    // Clean up excessive whitespace
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]+$/gم, '')
+    
+    // Fix code blocks
+    .replace(/```(\w*)\n/g, '```$1\n')
+    
+    // Ensure paragraphs have proper spacing
+    .replace(/([.!?])\n([A-Z])/g, '$1\n\n$2');
+
+  // 2. Convert common HTML to Markdown (if needed)
+  processed = processed
+    // Convert <br/> to line breaks
+    .replace(/<br\s*\/?>/gi, '\n')
+    
+    // Convert <p> tags to paragraphs
+    .replace(/<p>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    
+    // Convert basic HTML formatting
+    .replace(/<strong>(.*?)<\/strong>/gi, '**$1**')
+    .replace(/<b>(.*?)<\/b>/gi, '**$1**')
+    .replace(/<em>(.*?)<\/em>/gi, '*$1*')
+    .replace(/<i>(.*?)<\/i>/gi, '*$1*')
+    .replace(/<code>(.*?)<\/code>/gi, '`$1`');
+
+  // 3. Custom formatting fixes (add your specific cases here)
+  processed = processed
+    // Add your specific KB formatting fixes
+    .replace(/\[ERROR\]/g, '⚠️ **ERROR**')
+    .replace(/\[INFO\]/g, 'ℹ️ **INFO**')
+    .replace(/\[WARNING\]/g, '⚠️ **WARNING**')
+    .replace(/\[SUCCESS\]/g, '✅ **SUCCESS**');
+
+  // 4. Clean up final result
+  processed = processed
+    .trim()
+    .replace(/\n{3,}/g, '\n\n');
+
+  console.log('KB Response Processed:', processed);
+  return processed;
+};
+
 const apiClient = axios.create({
   baseURL: API_CONFIG.BASE_URL,
   timeout: API_CONFIG.TIMEOUT,
@@ -103,11 +167,16 @@ export const chatService = {
   async searchKnowledge(query) {
     try {
       const response = await kbApiClient.post(KB_CONFIG.ENDPOINTS.TROUBLESHOOT, {
-        value: { text: query }
+        text: query
       });
 
       if (response.data && response.data.response) {
-        return response.data.response;
+        console.log('KB Response Raw:', response.data.response);
+        console.log('KB Response Type:', typeof response.data.response);
+        
+        // Preprocess KB response before returning
+        const processedResponse = preprocessKBResponse(response.data.response);
+        return processedResponse;
       } else {
         throw new Error('Invalid response format from KB service');
       }
