@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 import logging
 from openai import OpenAI
+import json
 
 # Load environment variables (optional)
 try:
@@ -79,6 +80,20 @@ def chat_completions():
     except Exception as e:
         logger.error(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
+
+@app.route('/v1/feedback', methods=['POST'])
+def capture_feedback():
+    data = request.get_json(force=True)
+    required = {'conversationId', 'messageId', 'rating'}
+    if not required.issubset(data):
+        return jsonify({'error': 'missing fields'}), 400
+    # append to local file
+    try:
+        with open('feedback.jsonl', 'a', encoding='utf-8') as f:
+            f.write(json.dumps(data, ensure_ascii=False) + '\n')
+    except Exception as e:
+        logger.error(f'Failed to write feedback: {e}')
+    return jsonify({'status': 'ok'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True) 

@@ -196,5 +196,13 @@ export const chatService = {
         throw new Error(error.response?.data?.error || 'Failed to search knowledge base');
       }
     }
+  },
+
+  async submitFeedback(payload) {
+    try {
+      await apiClient.post('/v1/feedback', payload);
+    } catch (error) {
+      console.warn('Failed to submit feedback:', error);
+    }
   }
 }; 

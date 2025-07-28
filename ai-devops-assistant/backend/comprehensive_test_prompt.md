@@ -147,3 +147,80 @@ The UI improvements are solid and production-ready. The empty content issue is o
 **The UI framework you built is solid - just adding more markdown parsing capabilities behind the scenes!** 🚀
 
 Your current placeholder system will automatically be replaced by actual content when the packages are added and configured. 
+
+────────────────────────
+1. Data to capture
+────────────────────────
+When a user clicks 👍 or 👎 send:
+
+• conversationId  
+• messageId (assistant message being rated)  
+• rating: `"like"` or `"dislike"`  
+• comment (string, optional – present only for dislikes)  
+• full context you care about, e.g.  
+  – assistantMessage.content  
+  – last N user messages (or entire history)  
+  – timestamp, userId (if available)
+
+────────────────────────
+2. Front-end changes (small)
+────────────────────────
+A. chatService.js  
+```ts
+export async function submitFeedback(payload) {
+  return apiClient.post('/v1/feedback', payload);
+}
+```
+
+B. ChatWindow’s `handleMessageFeedback`
+```js
+if (feedback.type === 'like' || feedback.type === 'dislike') {
+  const assistantMsg = messages.find(m => m.id === messageId);
+  const payload = {
+    conversationId: activeConversation.id,
+    messageId,
+    rating: feedback.type,
+    comment: feedback.comment || null,
+    assistantContent: assistantMsg?.content || '',
+    messages: messages.slice(-10)        // last 10 msgs for context
+  };
+  chatService.submitFeedback(payload).catch(err => console.warn('feedback err', err));
+}
+```
+(No UI impact; you can keep local feedback state unchanged.)
+
+────────────────────────
+3. Back-end endpoint (Flask example)
+────────────────────────
+```python
+<code_block_to_apply_changes_from>
+```
+
+Later you can move persistence to a real DB or analytics pipeline; the contract stays the same.
+
+────────────────────────
+4. Advantages of this pattern
+────────────────────────
+• **Zero impact on chat latency** – feedback is fire-and-forget  
+• **Extensible** – add `userAgent`, `modelName`, `latencyMs`, etc.  
+• **No refactor** – only small addition to `chatService` + `handleMessageFeedback`  
+• **Works for likes & dislikes** – same endpoint, `rating` flag distinguishes
+
+────────────────────────
+5. Optional Enhancements
+────────────────────────
+• Send only when user closes feedback dialog (for dislikes).  
+• Debounce likes (prevent double-click).  
+• Add optimistic UI: hide or grey-out icons once submitted.  
+• Store `wasEdited: true` if the assistant message was regenerated.
+
+────────────────────────
+Next step
+────────────────────────
+If this design looks good, we add:
+
+1. `/v1/feedback` route in back-end (tiny Flask handler).  
+2. `submitFeedback` helper in `chatService.js`.  
+3. Small call inside `handleMessageFeedback` in `ChatWindow`.
+
+Let me know and I’ll implement those exact minimal edits. 

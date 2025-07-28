@@ -45,6 +45,15 @@ const ChatWindow = ({
     }
     if (activeConversation) {
       addMessageFeedback(activeConversation.id, messageId, feedback);
+      chatService.submitFeedback({
+        conversationId: activeConversation.id,
+        messageId,
+        rating: feedback.type,
+        comment: feedback.comment || null,
+        assistantContent: messages.find(m=>m.id===messageId)?.content || '',
+        timestamp: new Date().toISOString(),
+        messages: messages.slice(-10) // context
+      });
     }
   };
 
