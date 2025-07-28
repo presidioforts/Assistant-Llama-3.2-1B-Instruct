@@ -4,6 +4,7 @@ import MessageBubble from './MessageBubble';
 import MessageInput from './MessageInput';
 import Loader from './Loader';
 import { chatService } from '../utils/chatService';
+import { useConversations } from '../hooks/useConversations';
 
 const ChatWindow = ({ 
   messages, 
@@ -12,6 +13,14 @@ const ChatWindow = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  
+  // Get the enhanced conversation functions
+  const { 
+    addMessageFeedback, 
+    updateMessageStatus,
+    addMessageToConversation,
+    createMessage 
+  } = useConversations();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -21,18 +30,43 @@ const ChatWindow = ({
     scrollToBottom();
   }, [messages]);
 
+  // Handle feedback for messages
+  const handleMessageFeedback = (messageId, feedback) => {
+    if (activeConversation) {
+      addMessageFeedback(activeConversation.id, messageId, feedback);
+    }
+  };
+
   const handleSendMessage = async (messageContent, mode = 'ask') => {
     if (!messageContent.trim()) return;
 
-    const userMessage = {
-      role: 'user',
-      content: messageContent,
-      timestamp: new Date(),
-      mode: mode
-    };
+    // Create user message with proper structure
+    const userMessage = createMessage(
+      'user',
+      messageContent,
+      mode,
+      activeConversation?.id,
+      'sent'
+    );
 
+    // Add user message to conversation
     const updatedMessages = [...messages, userMessage];
     onMessagesUpdate(updatedMessages);
+    
+    // Create assistant message with 'sending' status
+    const assistantMessageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const sendingMessage = createMessage(
+      'assistant',
+      '',
+      mode,
+      activeConversation?.id,
+      'sending'
+    );
+    sendingMessage.id = assistantMessageId; // Override ID to track this specific message
+
+    // Show sending status
+    const messagesWithSending = [...updatedMessages, sendingMessage];
+    onMessagesUpdate(messagesWithSending);
     setIsLoading(true);
 
     try {
@@ -46,26 +80,37 @@ const ChatWindow = ({
         response = await chatService.sendMessage(updatedMessages);
       }
       
-      const assistantMessage = {
-        role: 'assistant',
-        content: response,
-        timestamp: new Date(),
-        mode: mode
-      };
+      // Create successful assistant message
+      const assistantMessage = createMessage(
+        'assistant',
+        response,
+        mode,
+        activeConversation?.id,
+        'sent'
+      );
 
-      onMessagesUpdate([...updatedMessages, assistantMessage]);
+      // Replace sending message with successful response
+      const finalMessages = [...updatedMessages, assistantMessage];
+      onMessagesUpdate(finalMessages);
+
     } catch (error) {
       console.error('Error sending message:', error);
-      const errorMessage = {
-        role: 'assistant',
-        content: mode === 'search' 
+      
+      // Create error message
+      const errorMessage = createMessage(
+        'assistant',
+        mode === 'search' 
           ? 'I apologize, but I encountered an error while searching the knowledge base. Please try again.'
           : 'I apologize, but I encountered an error while processing your request. Please try again.',
-        timestamp: new Date(),
-        isError: true,
-        mode: mode
-      };
-      onMessagesUpdate([...updatedMessages, errorMessage]);
+        mode,
+        activeConversation?.id,
+        'error'
+      );
+      errorMessage.isError = true;
+
+      // Replace sending message with error
+      const errorMessages = [...updatedMessages, errorMessage];
+      onMessagesUpdate(errorMessages);
     } finally {
       setIsLoading(false);
     }
@@ -146,10 +191,11 @@ const ChatWindow = ({
             </Typography>
           </Box>
         ) : (
-          messages.map((message, index) => (
+          messages.map((message) => (
             <MessageBubble 
-              key={index} 
-              message={message} 
+              key={message.id || `fallback-${messages.indexOf(message)}`} // Use ID or fallback
+              message={message}
+              onFeedback={handleMessageFeedback}
             />
           ))
         )}

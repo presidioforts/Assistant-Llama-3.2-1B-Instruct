@@ -19,12 +19,12 @@ const preprocessKBResponse = (rawResponse) => {
     .replace(/^(#{1,6})\s*(.+)$/gm, '$1 $2')
     
     // Fix list formatting
-    .replace(/^[\s]*[-*+]\s*/gم, '- ')
-    .replace(/^[\s]*(\d+\.)\s*/gم, '$1 ')
+    .replace(/^[\s]*[-*+]\s*/gm, '- ')
+    .replace(/^[\s]*(\d+\.)\s*/gm, '$1 ')
     
     // Clean up excessive whitespace
     .replace(/\n{3,}/g, '\n\n')
-    .replace(/[ \t]+$/gم, '')
+    .replace(/[ \t]+$/gm, '')
     
     // Fix code blocks
     .replace(/```(\w*)\n/g, '```$1\n')
@@ -174,9 +174,12 @@ export const chatService = {
         console.log('KB Response Raw:', response.data.response);
         console.log('KB Response Type:', typeof response.data.response);
         
-        // Preprocess KB response before returning
-        const processedResponse = preprocessKBResponse(response.data.response);
-        return processedResponse;
+        // Temporarily disable preprocessing to test
+        // const processedResponse = preprocessKBResponse(response.data.response);
+        // return processedResponse;
+        
+        // Return raw response for now
+        return response.data.response;
       } else {
         throw new Error('Invalid response format from KB service');
       }
