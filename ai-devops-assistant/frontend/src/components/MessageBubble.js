@@ -199,17 +199,19 @@ const MessageBubble = ({ message, onFeedback }) => {
           </Box>
         )}
         
-        <Box sx={{ maxWidth: '70%' }}>
+        <Box sx={{ maxWidth: '70%', minWidth: 280 }}>
           <Paper
             elevation={1}
             sx={{
               p: 2,
-              backgroundColor: isError
-                ? 'error.light'
-                : isUser
+              backgroundColor: isError 
+                ? 'error.light' 
+                : isUser 
                   ? '#f0f2f5' // ChatGPT-like light grey for user messages
                   : '#ffffff',
-              color: isError ? 'white' : 'text.primary'
+              color: isError ? 'white' : 'text.primary',
+              borderRadius: 2, // smoother rounded corners (theme spacing*2)
+              border: '1px solid #e0e0e0'
             }}
           >
             <Box
