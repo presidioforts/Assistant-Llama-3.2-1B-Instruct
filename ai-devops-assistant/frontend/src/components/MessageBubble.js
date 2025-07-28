@@ -26,7 +26,8 @@ import {
   ThumbDownOutlined,
   Schedule,
   CheckCircle,
-  ErrorOutline
+  ErrorOutline,
+  Edit, Save, Close
 } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
@@ -55,6 +56,26 @@ const MessageBubble = ({ message, onFeedback }) => {
   const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [copySnackbarOpen, setCopySnackbarOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [draftText, setDraftText] = useState(message.content);
+
+  const handleEditStart = () => {
+    setIsEditing(true);
+    setDraftText(message.content);
+  };
+
+  const handleEditCancel = () => {
+    setIsEditing(false);
+  };
+
+  const handleEditSave = () => {
+    if (draftText.trim() && onFeedback) {
+      // Reuse onFeedback prop slot for edit callback to avoid API change
+      // We send special feedback type 'edit'
+      onFeedback(message.id, { type: 'edit', content: draftText });
+    }
+    setIsEditing(false);
+  };
 
   // Handle like button
   const handleLike = () => {
@@ -183,12 +204,12 @@ const MessageBubble = ({ message, onFeedback }) => {
             elevation={1}
             sx={{
               p: 2,
-              backgroundColor: isError 
-                ? 'error.light' 
-                : isUser 
-                  ? 'primary.main'
+              backgroundColor: isError
+                ? 'error.light'
+                : isUser
+                  ? '#f0f2f5' // ChatGPT-like light grey for user messages
                   : '#ffffff',
-              color: isError || isUser ? 'white' : 'text.primary'
+              color: isError ? 'white' : 'text.primary'
             }}
           >
             <Box
@@ -241,72 +262,98 @@ const MessageBubble = ({ message, onFeedback }) => {
                 },
               }}
             >
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[[rehypeHighlight, rehypeHighlightConfig], rehypeRaw]}
-                components={{
-                    p: ({ children }) => (
-                      <Typography variant="body1" component="p">
-                        {children}
-                      </Typography>
-                    ),
-                    img: ({ node, alt, src, title, ...props }) => {
-                      // Handle images with error fallback
-                      return (
-                        <Box
-                          component="img"
-                          src={src}
-                          alt={alt || 'Image'}
-                          title={title}
-                          onError={(e) => {
-                            // Hide broken images or show placeholder
-                            e.target.style.display = 'none';
-                            console.warn('Failed to load image:', src);
-                          }}
-                          sx={{
-                            maxWidth: '100%',
-                            height: 'auto',
-                            borderRadius: 1,
-                            mt: 1,
-                            mb: 1,
-                            border: '1px solid #e0e0e0'
-                          }}
-                          {...props}
-                        />
-                      );
-                    },
-                    code: ({ node, inline, className, children, ...props }) => {
-                      if (inline) {
-                        // Inline code (single backticks)
+              {isUser ? (
+                isEditing ? (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                    <TextField
+                      multiline
+                      fullWidth
+                      minRows={3}
+                      value={draftText}
+                      onChange={(e) => setDraftText(e.target.value)}
+                    />
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <IconButton size="small" onClick={handleEditSave}>
+                        <Save fontSize="small" />
+                      </IconButton>
+                      <IconButton size="small" onClick={handleEditCancel}>
+                        <Close fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {message.content}
+                  </Typography>
+                )
+              ) : (
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[[rehypeHighlight, rehypeHighlightConfig], rehypeRaw]}
+                  components={{
+                      p: ({ children }) => (
+                        <Typography variant="body1" component="p">
+                          {children}
+                        </Typography>
+                      ),
+                      img: ({ node, alt, src, title, ...props }) => {
+                        // Handle images with error fallback
                         return (
-                          <code
-                            style={{
-                              backgroundColor: 'rgba(0,0,0,0.08)',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              fontSize: '0.875rem',
-                              fontFamily: '"JetBrains Mono", "Roboto Mono", monospace',
+                          <Box
+                            component="img"
+                            src={src}
+                            alt={alt || 'Image'}
+                            title={title}
+                            onError={(e) => {
+                              // Hide broken images or show placeholder
+                              e.target.style.display = 'none';
+                              console.warn('Failed to load image:', src);
                             }}
+                            sx={{
+                              maxWidth: '100%',
+                              height: 'auto',
+                              borderRadius: 1,
+                              mt: 1,
+                              mb: 1,
+                              border: '1px solid #e0e0e0'
+                            }}
+                            {...props}
+                          />
+                        );
+                      },
+                      code: ({ node, inline, className, children, ...props }) => {
+                        if (inline) {
+                          // Inline code (single backticks)
+                          return (
+                            <code
+                              style={{
+                                backgroundColor: 'rgba(0,0,0,0.08)',
+                                padding: '2px 6px',
+                                borderRadius: '4px',
+                                fontSize: '0.875rem',
+                                fontFamily: '"JetBrains Mono", "Roboto Mono", monospace',
+                              }}
+                              {...props}
+                            >
+                              {children}
+                            </code>
+                          );
+                        }
+                        // Block code (triple backticks) - use enhanced CodeBlock
+                        return (
+                          <CodeBlock 
+                            className={className} 
                             {...props}
                           >
                             {children}
-                          </code>
+                          </CodeBlock>
                         );
-                      }
-                      // Block code (triple backticks) - use enhanced CodeBlock
-                      return (
-                        <CodeBlock 
-                          className={className} 
-                          {...props}
-                        >
-                          {children}
-                        </CodeBlock>
-                      );
-                    },
-                  }}
-                >
-                  {message.content}
-                </ReactMarkdown>
+                      },
+                    }}
+                  >
+                    {message.content}
+                  </ReactMarkdown>
+              )}
             </Box>
             
             {/* Timestamp and Status */}
@@ -417,6 +464,11 @@ const MessageBubble = ({ message, onFeedback }) => {
           <Box sx={{ ml: 1, mt: 1 }}>
             <Person color="action" />
           </Box>
+        )}
+        {isUser && !isEditing && (
+          <IconButton size="small" onClick={handleEditStart} sx={{ ml: 1 }}>
+            <Edit fontSize="small" />
+          </IconButton>
         )}
       </Box>
 

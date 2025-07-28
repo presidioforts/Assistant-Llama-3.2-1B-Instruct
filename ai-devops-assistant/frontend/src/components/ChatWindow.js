@@ -32,8 +32,44 @@ const ChatWindow = ({
 
   // Handle feedback for messages
   const handleMessageFeedback = (messageId, feedback) => {
+    if (feedback.type === 'edit') {
+      // Update the message content and resend
+      if (!activeConversation) return;
+      const editedMessages = messages.map((m) =>
+        m.id === messageId ? { ...m, content: feedback.content } : m
+      );
+      onMessagesUpdate(editedMessages);
+      // Resend to backend
+      resendEditedMessage(editedMessages);
+      return;
+    }
     if (activeConversation) {
       addMessageFeedback(activeConversation.id, messageId, feedback);
+    }
+  };
+
+  const resendEditedMessage = async (editedMessages) => {
+    // show sending placeholder
+    const assistantMsg = createMessage(
+      'assistant',
+      '',
+      editedMessages[editedMessages.length - 1].mode || 'ask',
+      activeConversation?.id,
+      'sending'
+    );
+    const withSending = [...editedMessages, assistantMsg];
+    onMessagesUpdate(withSending);
+    setIsLoading(true);
+    try {
+      const response = await chatService.sendMessage(editedMessages);
+      const finalAssistant = { ...assistantMsg, content: response, status: 'sent' };
+      const finalMessages = [...editedMessages, finalAssistant];
+      onMessagesUpdate(finalMessages);
+    } catch (err) {
+      const errorAssistant = { ...assistantMsg, status: 'error', isError: true, content: 'Error processing edited message.' };
+      onMessagesUpdate([...editedMessages, errorAssistant]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
