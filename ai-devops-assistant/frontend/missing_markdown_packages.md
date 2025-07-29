@@ -65,6 +65,20 @@ npm install remark-definition-list remark-admonitions remark-task-list-item
 npm install remark-gfm-table-align
 ```
 
+## Backend Python Packages (for OpenAI test backend)
+
+```bash
+pip install openai python-dotenv
+```
+
+These are **in addition** to the existing Flask / flask-cors etc. already in `backend/requirements.txt`.
+
+## Essential Front-End Install Command (one-liner)
+
+```bash
+npm install remark-math rehype-katex katex mermaid
+```
+
 ## Current Coverage Assessment:
 
 ✅ **Working Well:**
