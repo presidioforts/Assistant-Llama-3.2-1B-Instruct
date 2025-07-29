@@ -396,9 +396,10 @@ const MessageBubble = ({ message, onFeedback }) => {
                   onClick={handleLike}
                   disabled={hasDisliked} // Can't like if already disliked
                   sx={{ 
-                    color: hasLiked ? 'warning.main' : 'text.secondary',
+                    color: hasLiked ? '#ffffff' : 'text.secondary',
+                    bgcolor: hasLiked ? 'warning.main' : 'transparent',
                     '&:hover': { 
-                      bgcolor: hasLiked ? 'warning.light' : 'action.hover',
+                      bgcolor: hasLiked ? 'warning.dark' : 'action.hover',
                       transform: 'scale(1.1)'
                     },
                     transition: 'all 0.2s ease'
@@ -414,9 +415,10 @@ const MessageBubble = ({ message, onFeedback }) => {
                   onClick={handleDislike}
                   disabled={hasLiked} // Can't dislike if already liked
                   sx={{ 
-                    color: hasDisliked ? 'warning.main' : 'text.secondary',
+                    color: hasDisliked ? '#ffffff' : 'text.secondary',
+                    bgcolor: hasDisliked ? 'error.main' : 'transparent',
                     '&:hover': { 
-                      bgcolor: hasDisliked ? 'warning.light' : 'action.hover',
+                      bgcolor: hasDisliked ? 'error.dark' : 'action.hover',
                       transform: 'scale(1.1)'
                     },
                     transition: 'all 0.2s ease'

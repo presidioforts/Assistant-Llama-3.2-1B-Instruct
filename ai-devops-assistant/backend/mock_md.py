@@ -2,9 +2,12 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import datetime
 import pathlib
+import logging
+import json  # enable writing feedback payloads to disk
 
 app = Flask(__name__)
 CORS(app)
+logger = app.logger
 
 MOCK_MD = """Below is a **mock** markdown answer containing real code blocks for UI testing.
 
@@ -118,6 +121,18 @@ def completions():
         ],
         "timestamp": datetime.datetime.utcnow().isoformat() + 'Z'
     })
+
+@app.route('/v1/feedback', methods=['POST'])
+def feedback():
+    data = request.get_json(force=True)
+    logger.info("[FEEDBACK] %s", data)
+    # Persist feedback to a JSONL file (one JSON object per line)
+    try:
+        with open('mock_feedback.jsonl', 'a', encoding='utf-8') as f:
+            f.write(json.dumps(data, ensure_ascii=False) + '\n')
+    except Exception as e:
+        logger.error('Failed to write feedback to mock_feedback.jsonl: %s', e)
+    return jsonify({'status':'logged'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True) 
