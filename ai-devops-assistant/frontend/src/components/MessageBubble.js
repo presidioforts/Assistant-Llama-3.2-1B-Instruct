@@ -59,6 +59,14 @@ const MessageBubble = ({ message, onFeedback }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [draftText, setDraftText] = useState(message.content);
 
+  // Local feedback to reflect UI changes immediately without waiting for parent re-render
+  const [localFeedback, setLocalFeedback] = useState(message.feedback);
+
+  // Keep local feedback in sync when parent updates arrive
+  React.useEffect(() => {
+    setLocalFeedback(message.feedback);
+  }, [message.feedback]);
+
   const handleEditStart = () => {
     setIsEditing(true);
     setDraftText(message.content);
@@ -83,7 +91,8 @@ const MessageBubble = ({ message, onFeedback }) => {
       type: 'like',
       timestamp: new Date().toISOString()
     };
-    
+    // Update local state immediately for instant UI feedback
+    setLocalFeedback(feedback);
     if (onFeedback) {
       onFeedback(message.id, feedback);
     }
@@ -101,7 +110,8 @@ const MessageBubble = ({ message, onFeedback }) => {
       comment: feedbackText.trim() || null,
       timestamp: new Date().toISOString()
     };
-    
+    // Update local state immediately for instant UI feedback
+    setLocalFeedback(feedback);
     if (onFeedback) {
       onFeedback(message.id, feedback);
     }
@@ -135,8 +145,8 @@ const MessageBubble = ({ message, onFeedback }) => {
   };
 
   // Check if message has existing feedback
-  const hasLiked = message.feedback?.type === 'like';
-  const hasDisliked = message.feedback?.type === 'dislike';
+  const hasLiked = localFeedback?.type === 'like';
+  const hasDisliked = localFeedback?.type === 'dislike';
 
   // Get status icon and color
   const getStatusIndicator = () => {
@@ -397,9 +407,9 @@ const MessageBubble = ({ message, onFeedback }) => {
                   disabled={hasDisliked} // Can't like if already disliked
                   sx={{ 
                     color: hasLiked ? '#ffffff' : 'text.secondary',
-                    bgcolor: hasLiked ? 'warning.main' : 'transparent',
+                    bgcolor: hasLiked ? 'success.main' : 'transparent',
                     '&:hover': { 
-                      bgcolor: hasLiked ? 'warning.dark' : 'action.hover',
+                      bgcolor: hasLiked ? 'success.dark' : 'action.hover',
                       transform: 'scale(1.1)'
                     },
                     transition: 'all 0.2s ease'
