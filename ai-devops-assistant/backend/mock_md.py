@@ -53,6 +53,224 @@ graph TD
 | dev | dev.example.com | 1 | Auto-reload |
 | staging | staging.example.com | 2 | QA only |
 | prod | example.com | 4 | 24/7 |
+
+# 🌍 Universal Markdown Showcase
+
+> **Purpose**  
+> Stress-test *every* part of your renderer in one go.  
+> — *DevOps AI Assistant*
+
+---
+
+## 1. Basic Text Styles
+
+- **Bold**  
+- *Italic*  
+- ***Bold & Italic***  
+- ~~Strikethrough~~  
+- <u>Underline (HTML-only)</u>  
+- <kbd>Ctrl</kbd>+<kbd>C</kbd> inline `code`
+
+### Emoji & Escapes
+
+| 😀 | 🤖 | 🇮🇳 | &#128176; |
+|---|---|---|---|
+
+---
+
+## 2. Lists
+
+### 2.1 Unordered
+
+* Bullet
+  * Nested
+    * Deep nest
+
+### 2.2 Ordered
+
+1. First
+   1. Child
+      1. Grand-child
+2. Second
+
+### 2.3 Task List
+
+- [x] Sample checked
+- [ ] Sample unchecked
+- [ ] ~~Deprecated task~~
+
+---
+
+## 3. Links & Images
+
+Inline link: [OpenAI](https://openai.com)  
+Reference link: [DevDocs][devdocs]  
+
+![Placeholder Image](https://via.placeholder.com/150 "Alt Text")
+
+[devdocs]: https://devdocs.io
+
+---
+
+## 4. Tables
+
+| SKU | Description              | Qty | Price |
+|-----|--------------------------|----:|------:|
+| 001 | **Premium** Plan         |  10 | $9.99 |
+| 002 | _Basic_ Plan <br>*(SALE)*|   5 | ~~$4.99~~ **$2.99** |
+
+> <sup>Table footnote: prices in USD.</sup>
+
+---
+
+## 5. Blockquotes
+
+> A single-level quote
+>
+>> A nested quote  
+>> containing **bold** and `code`
+
+---
+
+## 6. Code Fences
+
+```bash
+# Shell (bash)
+curl https://api.example.com/v1/products
+```
+
+```json
+{
+  "id": 123,
+  "name": "Sample",
+  "inStock": true
+}
+```
+
+```python
+def hello(name: str) -> str:
+    return f"Hello, {name}!"
+```
+
+```javascript
+export const sum = (a, b) => a + b;
+```
+
+```yaml
+services:
+  web:
+    image: nginx:1.27
+    ports: ["80:80"]
+```
+
+```dockerfile
+FROM python:3.11-slim
+COPY . /app
+CMD ["python", "main.py"]
+```
+
+```diff
+- old line
++ new line
+```
+
+---
+
+## 7. Diagrams & Math
+
+```mermaid
+flowchart LR
+    A[User] -->|Clicks| B(UI)
+    B --> C{Render}
+    C -->|OK| D[Done]
+```
+
+Inline math: $E = mc^2$  
+Block math:
+
+```math
+\int_{0}^{\pi} \sin(x)\,dx = 2
+```
+
+---
+
+## 8. HTML Blocks (optional support)
+
+<details>
+  <summary>Click to reveal hidden text</summary>
+  <p>Surprise! 🎉</p>
+</details>
+
+---
+
+## 9. Footnotes & Citations
+
+Here is a fact that needs a footnote.[^1]
+
+[^1]: Footnote **definition** with *markdown* inside.
+
+---
+
+## 10. Horizontal Rules & Breaks
+
+Rule above  
+---  
+Hard&nbsp;break  
+Next&nbsp;line
+
+---
+
+## 11. Mixed Heading Levels
+
+### H3
+#### H4
+##### H5
+###### H6
+
+---
+
+## 12. Callouts (GitHub-style)
+
+> [!NOTE]  
+> This is a **note** callout.
+
+> [!TIP]  
+> Tips can include `code`.
+
+> [!WARNING]  
+> **Warnings** grab attention.
+
+---
+
+## 13. Custom Containers (Pandoc/GFM)
+
+:::info
+This is an *informational* container.
+:::
+
+:::danger
+Handle **with care**!
+:::
+
+---
+
+## 14. International Text
+
+- English: Hello, world!
+- Español: ¡Hola, mundo!
+- 中文: 你好，世界！
+- العربية: مرحبًا بالعالم
+- தமிழ்: வணக்கம், உலகம்!
+
+---
+
+## 15. End-to-End Checklist ✅
+
+1. Rendering completes with no crashes.
+2. All elements styled reasonably.
+3. Scroll performance remains smooth.
+4. Clipboard copy preserves raw markdown.
+
 """
 
 BASIC_MD = """### Basic Markdown Example
@@ -78,6 +296,223 @@ print('basic example')
 | YAML | docker-compose.yml |
 | Docker | Dockerfile |
 | Python | app.py |
+
+
+# 🌍 Universal Markdown Showcase
+
+> **Purpose**  
+> Stress-test *every* part of your renderer in one go.  
+> — *DevOps AI Assistant*
+
+---
+
+## 1. Basic Text Styles
+
+- **Bold**  
+- *Italic*  
+- ***Bold & Italic***  
+- ~~Strikethrough~~  
+- <u>Underline (HTML-only)</u>  
+- <kbd>Ctrl</kbd>+<kbd>C</kbd> inline `code`
+
+### Emoji & Escapes
+
+| 😀 | 🤖 | 🇮🇳 | &#128176; |
+|---|---|---|---|
+
+---
+
+## 2. Lists
+
+### 2.1 Unordered
+
+* Bullet
+  * Nested
+    * Deep nest
+
+### 2.2 Ordered
+
+1. First
+   1. Child
+      1. Grand-child
+2. Second
+
+### 2.3 Task List
+
+- [x] Sample checked
+- [ ] Sample unchecked
+- [ ] ~~Deprecated task~~
+
+---
+
+## 3. Links & Images
+
+Inline link: [OpenAI](https://openai.com)  
+Reference link: [DevDocs][devdocs]  
+
+![Placeholder Image](https://via.placeholder.com/150 "Alt Text")
+
+[devdocs]: https://devdocs.io
+
+---
+
+## 4. Tables
+
+| SKU | Description              | Qty | Price |
+|-----|--------------------------|----:|------:|
+| 001 | **Premium** Plan         |  10 | $9.99 |
+| 002 | _Basic_ Plan <br>*(SALE)*|   5 | ~~$4.99~~ **$2.99** |
+
+> <sup>Table footnote: prices in USD.</sup>
+
+---
+
+## 5. Blockquotes
+
+> A single-level quote
+>
+>> A nested quote  
+>> containing **bold** and `code`
+
+---
+
+## 6. Code Fences
+
+```bash
+# Shell (bash)
+curl https://api.example.com/v1/products
+```
+
+```json
+{
+  "id": 123,
+  "name": "Sample",
+  "inStock": true
+}
+```
+
+```python
+def hello(name: str) -> str:
+    return f"Hello, {name}!"
+```
+
+```javascript
+export const sum = (a, b) => a + b;
+```
+
+```yaml
+services:
+  web:
+    image: nginx:1.27
+    ports: ["80:80"]
+```
+
+```dockerfile
+FROM python:3.11-slim
+COPY . /app
+CMD ["python", "main.py"]
+```
+
+```diff
+- old line
++ new line
+```
+
+---
+
+## 7. Diagrams & Math
+
+```mermaid
+flowchart LR
+    A[User] -->|Clicks| B(UI)
+    B --> C{Render}
+    C -->|OK| D[Done]
+```
+
+Inline math: $E = mc^2$  
+Block math:
+
+```math
+\int_{0}^{\pi} \sin(x)\,dx = 2
+```
+
+---
+
+## 8. HTML Blocks (optional support)
+
+<details>
+  <summary>Click to reveal hidden text</summary>
+  <p>Surprise! 🎉</p>
+</details>
+
+---
+
+## 9. Footnotes & Citations
+
+Here is a fact that needs a footnote.[^1]
+
+[^1]: Footnote **definition** with *markdown* inside.
+
+---
+
+## 10. Horizontal Rules & Breaks
+
+Rule above  
+---  
+Hard&nbsp;break  
+Next&nbsp;line
+
+---
+
+## 11. Mixed Heading Levels
+
+### H3
+#### H4
+##### H5
+###### H6
+
+---
+
+## 12. Callouts (GitHub-style)
+
+> [!NOTE]  
+> This is a **note** callout.
+
+> [!TIP]  
+> Tips can include `code`.
+
+> [!WARNING]  
+> **Warnings** grab attention.
+
+---
+
+## 13. Custom Containers (Pandoc/GFM)
+
+:::info
+This is an *informational* container.
+:::
+
+:::danger
+Handle **with care**!
+:::
+
+---
+
+## 14. International Text
+
+- English: Hello, world!
+- Español: ¡Hola, mundo!
+- 中文: 你好，世界！
+
+---
+
+## 15. End-to-End Checklist ✅
+
+1. Rendering completes with no crashes.
+2. All elements styled reasonably.
+3. Scroll performance remains smooth.
+4. Clipboard copy preserves raw markdown.
+
 """
 
 comprehensive_path = pathlib.Path(__file__).parent / 'comprehensive_test_prompt.md'
@@ -93,14 +528,21 @@ def health():
 def choose_content(data):
     # If direct level param present
     if isinstance(data, dict) and 'level' in data:
-        return EXTENDED_MD if data.get('level') == 'extended' else BASIC_MD
+        level = data.get('level')
+        if level == 'extended':
+            return EXTENDED_MD
+        if level == 'mock':
+            return MOCK_MD
+        return BASIC_MD
     # If OpenAI-style payload with messages list
     if isinstance(data, dict) and 'messages' in data:
         last_user = next((m for m in reversed(data['messages']) if m.get('role')=='user'), None)
         if last_user and isinstance(last_user.get('content'), str):
             text = last_user['content'].lower()
-            if 'extended' in text or 'full' in text:
+            if any(word in text for word in ('extended', 'full')):
                 return EXTENDED_MD
+            if any(word in text for word in ('mock', 'showcase', 'universal')):
+                return MOCK_MD
         return BASIC_MD
     # default
     return BASIC_MD

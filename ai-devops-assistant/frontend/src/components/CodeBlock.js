@@ -29,8 +29,22 @@ const CodeBlock = ({
   if (typeof children === 'string') {
     codeContent = children;
   } else if (Array.isArray(children)) {
-    // Join array elements (they are usually strings)
-    codeContent = children.join('');
+    // Extract text from each array element, handling nested React elements to avoid [object Object]
+    codeContent = children.map((child) => {
+      if (typeof child === 'string') {
+        return child;
+      }
+      if (child && typeof child === 'object' && child.props && child.props.children) {
+        if (typeof child.props.children === 'string') {
+          return child.props.children;
+        }
+        if (Array.isArray(child.props.children)) {
+          return child.props.children.join('');
+        }
+      }
+      // Non-string child – ignore to prevent [object Object]
+      return '';
+    }).join('');
   } else if (children && typeof children === 'object' && children.props && children.props.children) {
     // Nested React element with its own children
     if (typeof children.props.children === 'string') {
